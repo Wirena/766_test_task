@@ -10,7 +10,7 @@
 class Chat : public QObject
 {
     Q_OBJECT
-    std::unique_ptr<QUdpSocket>socket = nullptr;
+    std::unique_ptr<QUdpSocket> socket = nullptr;
     int remotePort = -1;
     QString remotePortStr;
 public:
@@ -23,8 +23,6 @@ public slots:
     void sendMessage(QString Msg);
     void setListenPort(QString Port);
     void setRemotePort(QString Port);
-    void start();
-    void finish();
 signals:
     void error(QString Err);
     void messageReceived(QString Msg);

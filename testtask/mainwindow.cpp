@@ -5,19 +5,20 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow), shortcut(this)
 {
     ui->setupUi(this);
+
     ui->remotePortEdit->setValidator(new QIntValidator(0, 65536, ui->remotePortEdit));
     ui->localPortEdit->setValidator(new QIntValidator(0, 65536, ui->localPortEdit));
-    connect(ui->attachButton, &QPushButton::clicked, this, &MainWindow::onAttachClick);
     connect(ui->sendButton, &QPushButton::clicked, this, &MainWindow::onSendClick);
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWindow::onConnectClick);
     connect(ui->listenButton, &QPushButton::clicked, this, &MainWindow::onListenClick);
+    shortcut.setKey(Qt::CTRL | Qt::Key_Return);
+    connect(&shortcut, &QShortcut::activated, this, &MainWindow::onSendClick);
+    shortcut.setEnabled(true);
+    shortcut.setContext(Qt::ApplicationShortcut);
     chat.moveToThread(&thread);
-    connect(&thread, &QThread::started, &chat, &Chat::start);
-    connect(&thread, &QThread::finished, &chat, &Chat::finish);
     connect(this, &MainWindow::sendMessage, &chat, &Chat::sendMessage);
     connect(&chat, &Chat::error, this, &MainWindow::onError);
     connect(&chat, &Chat::messageReceived, this, &MainWindow::onMessageReceive);
@@ -36,11 +37,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::onSendClick()
 {
-    const auto message = ui->messageText->toPlainText();
+    const auto message = ui->messageText->toPlainText().trimmed();
     if(!message.isEmpty()){
         QString chatMessage{"you: "};
         chatMessage.append(message);
         ui->chatTextWidget->append(chatMessage);
+        ui->messageText->document()->clear();
         emit sendMessage(message);
     }
 }
@@ -51,10 +53,6 @@ void MainWindow::onConnectClick()
       emit setRemotePort(port);
 }
 
-void MainWindow::onAttachClick()
-{
-
-}
 
 void MainWindow::onListenClick()
 {
@@ -64,7 +62,7 @@ void MainWindow::onListenClick()
 
 void MainWindow::onError(QString Err)
 {
-    QMessageBox messageBox(QMessageBox::Icon::Warning, "Error", Err, QMessageBox::StandardButton::Ok,this);
+    QMessageBox messageBox(QMessageBox::Icon::Warning, "Error", Err, QMessageBox::StandardButton::Ok, this);
     messageBox.exec();
 }
 

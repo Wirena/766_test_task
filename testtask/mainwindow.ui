@@ -36,7 +36,7 @@
        <item row="1" column="5">
         <widget class="QPushButton" name="connectButton">
          <property name="text">
-          <string>Connect</string>
+          <string>Set Remote Port</string>
          </property>
         </widget>
        </item>
@@ -172,11 +172,20 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="attachButton">
-           <property name="text">
-            <string>Attachment</string>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-          </widget>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>

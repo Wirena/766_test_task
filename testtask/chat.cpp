@@ -9,6 +9,7 @@ void Chat::readPendingDatagrams()
 {
     while (socket->hasPendingDatagrams()) {
         const auto datagram = socket->receiveDatagram();
+        if(datagram.senderPort()!=remotePort) continue;
         if(datagram.isNull()) continue;
         auto datagramString = QString::fromUtf8(datagram.data());
         if(datagramString.isEmpty()) continue;
@@ -20,7 +21,11 @@ void Chat::readPendingDatagrams()
 void Chat::sendMessage(QString Msg)
 {
     if(!socket){
-        emit error("Set Listen address first");
+        emit error("Set Listen address before sending messages");
+        return;
+    }
+    if(remotePort==-1){
+        emit error("Set Remote address before sending messages");
         return;
     }
     const auto bytes = Msg.toUtf8();
@@ -28,7 +33,7 @@ void Chat::sendMessage(QString Msg)
     if(bytesSend != bytes.size()){
         const auto err = socket->error();
         if(err == QUdpSocket::SocketError::DatagramTooLargeError)
-            emit error("Message size is too large");
+            emit error("Message size is too big");
         else
             emit error("Failed to send message");
     }
@@ -36,8 +41,6 @@ void Chat::sendMessage(QString Msg)
 
 void Chat::setListenPort(QString Port)
 {
-    qDebug()<<"setListen";
-
     bool intParsed = false;
     const auto port = Port.toInt(&intParsed);
     if(!intParsed){
@@ -64,14 +67,4 @@ void Chat::setRemotePort(QString Port)
     }
     remotePortStr = Port;
     remotePort = port;
-}
-
-void Chat::start()
-{
-
-}
-
-void Chat::finish()
-{
-
 }
