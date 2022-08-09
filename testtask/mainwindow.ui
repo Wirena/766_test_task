@@ -34,9 +34,9 @@
         </widget>
        </item>
        <item row="1" column="5">
-        <widget class="QPushButton" name="connectButton">
+        <widget class="QPushButton" name="disconnectButton">
          <property name="text">
-          <string>Set Remote Port</string>
+          <string>Disconnect</string>
          </property>
         </widget>
        </item>
@@ -117,9 +117,9 @@
         </spacer>
        </item>
        <item row="0" column="5">
-        <widget class="QPushButton" name="listenButton">
+        <widget class="QPushButton" name="connectButton">
          <property name="text">
-          <string>Listen</string>
+          <string>Connect</string>
          </property>
         </widget>
        </item>

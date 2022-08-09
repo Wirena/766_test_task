@@ -24,13 +24,14 @@ public:
 public slots:
     void onSendClick();
     void onConnectClick();
-    void onListenClick();
+    void onDisconnectClick();
     void onError(QString Err);
     void onMessageReceive(QString);
 signals:
     void sendMessage(QString);
     void setListenPort(QString);
     void setRemotePort(QString);
+    void disconnect();
 private:
     Ui::MainWindow *ui;
 };

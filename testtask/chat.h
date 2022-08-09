@@ -23,6 +23,7 @@ public slots:
     void sendMessage(QString Msg);
     void setListenPort(QString Port);
     void setRemotePort(QString Port);
+    void disconnect();
 signals:
     void error(QString Err);
     void messageReceived(QString Msg);

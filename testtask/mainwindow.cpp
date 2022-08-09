@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->localPortEdit->setValidator(new QIntValidator(0, 65536, ui->localPortEdit));
     connect(ui->sendButton, &QPushButton::clicked, this, &MainWindow::onSendClick);
     connect(ui->connectButton, &QPushButton::clicked, this, &MainWindow::onConnectClick);
-    connect(ui->listenButton, &QPushButton::clicked, this, &MainWindow::onListenClick);
+    connect(ui->disconnectButton, &QPushButton::clicked, this, &MainWindow::onDisconnectClick);
     shortcut.setKey(Qt::CTRL | Qt::Key_Return);
     connect(&shortcut, &QShortcut::activated, this, &MainWindow::onSendClick);
     shortcut.setEnabled(true);
@@ -22,8 +22,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::sendMessage, &chat, &Chat::sendMessage);
     connect(&chat, &Chat::error, this, &MainWindow::onError);
     connect(&chat, &Chat::messageReceived, this, &MainWindow::onMessageReceive);
-    connect(this, &MainWindow::setRemotePort,&chat, &Chat::setRemotePort);
-    connect(this, &MainWindow::setListenPort ,&chat, &Chat::setListenPort);
+    connect(this, &MainWindow::setRemotePort, &chat, &Chat::setRemotePort);
+    connect(this, &MainWindow::setListenPort, &chat, &Chat::setListenPort);
+    connect(this, &MainWindow::disconnect, &chat, &Chat::disconnect);
     thread.start();
 }
 
@@ -49,15 +50,22 @@ void MainWindow::onSendClick()
 
 void MainWindow::onConnectClick()
 {
-    const auto port = ui->remotePortEdit->text();
-      emit setRemotePort(port);
+    const auto remotePort = ui->remotePortEdit->text();
+    emit setRemotePort(remotePort);
+
+    const auto localPort = ui->localPortEdit->text();
+    if(!localPort.isEmpty())
+        emit setListenPort(localPort);
+    ui->localPortEdit->setEnabled(false);
+    ui->remotePortEdit->setEnabled(false);
+
 }
 
-
-void MainWindow::onListenClick()
+void MainWindow::onDisconnectClick()
 {
-    const auto port = ui->localPortEdit->text();
-        emit setListenPort(port);
+    ui->localPortEdit->setEnabled(true);
+    ui->remotePortEdit->setEnabled(true);
+    emit disconnect();
 }
 
 void MainWindow::onError(QString Err)

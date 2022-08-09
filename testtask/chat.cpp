@@ -68,3 +68,10 @@ void Chat::setRemotePort(QString Port)
     remotePortStr = Port;
     remotePort = port;
 }
+
+void Chat::disconnect()
+{
+    if(socket)
+        socket->disconnect();
+    socket = nullptr;
+}
